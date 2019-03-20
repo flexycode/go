@@ -14,7 +14,7 @@ Check out the [Stellar Contribution Guide](https://github.com/stellar/docs/blob/
 ### Pull Requests
 
 * PR titles start with package name, ex. “horizon/ingest: fix...”
-* PRs must update the CHANGELOG with a small description of the change
+* PRs must update the [CHANGELOG](CHANGELOG.md) with a small description of the change
 * PRs are merged into master or release branch using squash merge
 * Carefully think about where your PR fits according to [semver](https://semver.org). Target it at master if it’s only a patch change, otherwise if it contains breaking change or significant feature additions, set the base branch to the next major or minor release.
 * Keep PR scope narrow. Expectation: 20 minutes to review max
