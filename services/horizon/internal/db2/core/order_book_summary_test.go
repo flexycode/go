@@ -31,27 +31,27 @@ func TestGetOrderBookSummary(t *testing.T) {
 	ibids := inverted.Bids()
 
 	// Check that summary was loaded correct
-	tt.Assert.Equal(int64(100000000), asks[0].Amount)
+	tt.Assert.Equal("100000000", asks[0].Amount)
 	tt.Assert.Equal(int32(15), asks[0].Pricen)
 	tt.Assert.Equal(int32(1), asks[0].Priced)
 
-	tt.Assert.Equal(int64(1000000000), asks[1].Amount)
+	tt.Assert.Equal("1000000000", asks[1].Amount)
 	tt.Assert.Equal(int32(20), asks[1].Pricen)
 	tt.Assert.Equal(int32(1), asks[1].Priced)
 
-	tt.Assert.Equal(int64(10000000000), asks[2].Amount)
+	tt.Assert.Equal("10000000000", asks[2].Amount)
 	tt.Assert.Equal(int32(50), asks[2].Pricen)
 	tt.Assert.Equal(int32(1), asks[2].Priced)
 
-	tt.Assert.Equal(int64(1000000000), bids[0].Amount)
+	tt.Assert.Equal("1000000000", bids[0].Amount)
 	tt.Assert.Equal(int32(10), bids[0].Pricen)
 	tt.Assert.Equal(int32(1), bids[0].Priced)
 
-	tt.Assert.Equal(int64(9000000000), bids[1].Amount)
+	tt.Assert.Equal("9000000000", bids[1].Amount)
 	tt.Assert.Equal(int32(9), bids[1].Pricen)
 	tt.Assert.Equal(int32(1), bids[1].Priced)
 
-	tt.Assert.Equal(int64(50000000000), bids[2].Amount)
+	tt.Assert.Equal("50000000000", bids[2].Amount)
 	tt.Assert.Equal(int32(5), bids[2].Pricen)
 	tt.Assert.Equal(int32(1), bids[2].Priced)
 

@@ -143,11 +143,11 @@ func TestSchemaVersion8(t *testing.T) {
 	var orderbookSummary OrderBookSummary
 	err = q.GetOrderBookSummary(&orderbookSummary, xdr.MustNewNativeAsset(), xdr.MustNewCreditAsset("USD", "GB2QIYT2IAUFMRXKLSLLPRECC6OCOGJMADSPTRK7TGNT2SFR2YGWDARD"), 10)
 	if tt.Assert.NoError(err) {
-		checkOrderBookRow(tt, orderbookSummary[0], "ask", int32(1), int32(1), float64(1), 300000000)
-		checkOrderBookRow(tt, orderbookSummary[1], "ask", int32(3), int32(1), float64(3), 400000000)
+		checkOrderBookRow(tt, orderbookSummary[0], "ask", int32(1), int32(1), float64(1), "300000000")
+		checkOrderBookRow(tt, orderbookSummary[1], "ask", int32(3), int32(1), float64(3), "400000000")
 
-		checkOrderBookRow(tt, orderbookSummary[2], "bid", int32(1), int32(2), float64(0.5), 200000000)
-		checkOrderBookRow(tt, orderbookSummary[3], "bid", int32(1), int32(1), float64(1), 100000000)
+		checkOrderBookRow(tt, orderbookSummary[2], "bid", int32(1), int32(2), float64(0.5), "200000000")
+		checkOrderBookRow(tt, orderbookSummary[3], "bid", int32(1), int32(1), float64(1), "100000000")
 	}
 }
 
@@ -263,10 +263,10 @@ func TestSchemaVersion9(t *testing.T) {
 	var orderbookSummary OrderBookSummary
 	err = q.GetOrderBookSummary(&orderbookSummary, xdr.MustNewNativeAsset(), xdr.MustNewCreditAsset("USD", "GB2QIYT2IAUFMRXKLSLLPRECC6OCOGJMADSPTRK7TGNT2SFR2YGWDARD"), 10)
 	if tt.Assert.NoError(err) {
-		checkOrderBookRow(tt, orderbookSummary[0], "ask", int32(1), int32(1), float64(1), 300000000)
-		checkOrderBookRow(tt, orderbookSummary[1], "ask", int32(3), int32(1), float64(3), 400000000)
+		checkOrderBookRow(tt, orderbookSummary[0], "ask", int32(1), int32(1), float64(1), "300000000")
+		checkOrderBookRow(tt, orderbookSummary[1], "ask", int32(3), int32(1), float64(3), "400000000")
 
-		checkOrderBookRow(tt, orderbookSummary[2], "bid", int32(1), int32(2), float64(0.5), 200000000)
-		checkOrderBookRow(tt, orderbookSummary[3], "bid", int32(1), int32(1), float64(1), 100000000)
+		checkOrderBookRow(tt, orderbookSummary[2], "bid", int32(1), int32(2), float64(0.5), "200000000")
+		checkOrderBookRow(tt, orderbookSummary[3], "bid", int32(1), int32(1), float64(1), "100000000")
 	}
 }
