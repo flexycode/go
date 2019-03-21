@@ -151,7 +151,7 @@ func TestSchemaVersion8(t *testing.T) {
 	}
 }
 
-func checkOrderBookRow(tt *test.T, row OrderBookSummaryPriceLevel, typ string, pricen, priced int32, pricef float64, amount int64) {
+func checkOrderBookRow(tt *test.T, row OrderBookSummaryPriceLevel, typ string, pricen, priced int32, pricef float64, amount string) {
 	tt.Assert.Equal(typ, row.Type)
 	tt.Assert.Equal(pricen, row.Pricen)
 	tt.Assert.Equal(priced, row.Priced)
