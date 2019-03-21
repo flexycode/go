@@ -98,3 +98,30 @@ func TestGetOrderBookSummary_Regress310(t *testing.T) {
 	tt.Assert.Equal(1.0/10.1, asks[1].Pricef)
 	tt.Assert.Equal(1.0/10.0, asks[2].Pricef)
 }
+
+func TestGetOrderBookSummary_AmountsExceedInt64(t *testing.T) {
+	tt := test.Start(t).Scenario("order_books")
+	defer tt.Finish()
+	q := &Q{tt.CoreSession()}
+
+	selling, err := AssetFromDB(xdr.AssetTypeAssetTypeCreditAlphanum4, "USD", "GC23QF2HUE52AMXUFUH3AYJAXXGXXV2VHXYYR6EYXETPKDXZSAW67XO4")
+	tt.Require.NoError(err)
+	buying, err := AssetFromDB(xdr.AssetTypeAssetTypeNative, "", "")
+	tt.Require.NoError(err)
+
+	// Generate huge amount at a single price level.
+	// Should be: 3 * 9131689504000000000 at both sides of the orderbook
+	_, err = tt.CoreDB.Exec(
+		`UPDATE offers SET amount = '9131689504000000000', pricen = 1, priced=1, price = 1`,
+	)
+	tt.Require.NoError(err)
+
+	var summary OrderBookSummary
+	err = q.GetOrderBookSummary(&summary, selling, buying, 20)
+	tt.Require.NoError(err)
+	tt.Assert.Len(summary, 2)
+	asks := summary.Asks()
+	bids := summary.Bids()
+	tt.Assert.Equal("27395068512000000000", asks[0].Amount)
+	tt.Assert.Equal("27395068512000000000", bids[0].Amount)
+}
