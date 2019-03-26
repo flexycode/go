@@ -2,6 +2,7 @@ package horizonclient
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -93,6 +94,7 @@ func addQueryParams(params ...interface{}) string {
 				}
 			}
 		default:
+			fmt.Printf("param is of type %T\n", param)
 			panic("Unknown parameter type")
 		}
 	}
