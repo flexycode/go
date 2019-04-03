@@ -631,6 +631,7 @@ func PrintHorizonError(hError *horizonclient.Error) error {
 	log.Println("hi1")
 	resultCodes, err := hError.ResultCodes()
 	if err != nil {
+		log.Println("Something bad happened!!", err)
 		return errors.Wrap(err, "Couldn't read ResultCodes")
 	}
 	log.Println("Error extras result codes:", resultCodes)
