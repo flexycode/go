@@ -130,7 +130,7 @@ func TestEffectStream(t *testing.T) {
 	hmock.On(
 		"GET",
 		"https://localhost/effects?cursor=now",
-	).ReturnString(500, ledgerStreamResponse)
+	).ReturnString(500, effectStreamResponse)
 
 	err = client.Stream(ctx, effectRequest, func(effect interface{}) {
 		resp, ok := effect.(effects.Base)
