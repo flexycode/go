@@ -74,13 +74,19 @@ func (er EffectRequest) BuildUrl() (endpoint string, err error) {
 	return endpoint, err
 }
 
+// Stream streams horizon effects. It can be used to stream all effects or account specific effects.
+// Use context.WithCancel to stop streaming or context.Background() if you want to stream indefinitely.
 func (er EffectRequest) Stream(
 	ctx context.Context,
 	client *Client,
 	handler func(interface{}),
 ) (err error) {
+	endpoint, err := er.BuildUrl()
+	if err != nil {
+		return errors.Wrap(err, "Unable to build endpoint")
+	}
 
-	url := fmt.Sprintf("%s/effects", client.getHorizonURL())
+	url := fmt.Sprintf("%s%s", client.getHorizonURL(), endpoint)
 	return client.stream(ctx, url, func(data []byte) error {
 		var effect effects.Base
 		err = json.Unmarshal(data, &effect)
