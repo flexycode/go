@@ -1,9 +1,12 @@
 package horizonclient
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 
+	"github.com/stellar/go/protocols/horizon/operations"
 	"github.com/stellar/go/support/errors"
 )
 
@@ -58,4 +61,44 @@ func (op *OperationRequest) setEndpoint(endpoint string) *OperationRequest {
 	}
 
 	return op
+}
+
+// SetPaymentsEndpoint is a helper function that sets the endpoint for OperationRequests to `payments`
+func (op *OperationRequest) SetPaymentsEndpoint() *OperationRequest {
+	return op.setEndpoint("payments")
+}
+
+// SetOperationsEndpoint is a helper function that sets the endpoint for OperationRequests to `operations`
+func (op *OperationRequest) SetOperationsEndpoint() *OperationRequest {
+	return op.setEndpoint("operations")
+}
+
+// Stream streams horizon operations. It can be used to stream all operations or account specific operations.
+// Use context.WithCancel to stop streaming or context.Background() if you want to stream indefinitely.
+func (op OperationRequest) Stream(
+	ctx context.Context,
+	client *Client,
+	handler func(interface{}),
+) (err error) {
+	endpoint, err := op.BuildUrl()
+	if err != nil {
+		return errors.Wrap(err, "Unable to build endpoint")
+	}
+
+	url := fmt.Sprintf("%s%s", client.getHorizonURL(), endpoint)
+	return client.stream(ctx, url, func(data []byte) error {
+		var baseRecord operations.Base
+
+		if err = json.Unmarshal(data, &baseRecord); err != nil {
+			return errors.Wrap(err, "Error unmarshaling data")
+		}
+
+		ops, err := operations.UnmarshalOperation(baseRecord.GetType(), data)
+		if err != nil {
+			return errors.Wrap(err, "Unmarshaling to the correct operation type")
+		}
+
+		handler(ops)
+		return nil
+	})
 }

@@ -312,7 +312,7 @@ func (c *Client) Offers(request OfferRequest) (offers hProtocol.OffersPage, err 
 // Operations returns stellar operations (https://www.stellar.org/developers/horizon/reference/resources/operation.html)
 // It can be used to return operations for an account, a ledger, a transaction and all operations on the network.
 func (c *Client) Operations(request OperationRequest) (ops operations.OperationsPage, err error) {
-	err = c.sendRequest(request.setEndpoint("operations"), &ops)
+	err = c.sendRequest(request.SetOperationsEndpoint(), &ops)
 	return
 }
 
@@ -389,7 +389,7 @@ func (c *Client) Paths(request PathsRequest) (paths hProtocol.PathsPage, err err
 // Payments returns stellar account_merge, create_account, path payment and payment operations.
 // It can be used to return payments for an account, a ledger, a transaction and all payments on the network.
 func (c *Client) Payments(request OperationRequest) (ops operations.OperationsPage, err error) {
-	err = c.sendRequest(request.setEndpoint("payments"), &ops)
+	err = c.sendRequest(request.SetPaymentsEndpoint(), &ops)
 	return
 }
 
