@@ -628,14 +628,14 @@ func PrintHorizonError(hError *horizonclient.Error) error {
 	var decodedResult, decodedEnvelope string
 	var err error
 
-	log.Println("hi1")
 	resultCodes, err := hError.ResultCodes()
 	if err != nil {
-		log.Println("Something bad happened!!", err)
 		return errors.Wrap(err, "Couldn't read ResultCodes")
 	}
 	log.Println("Error extras result codes:", resultCodes)
-	log.Println("hi2")
+	for _, code := range resultCodes.OperationCodes {
+		log.Println(code)
+	}
 
 	err = json.Unmarshal(problem.Extras["result_xdr"].([]byte), &decodedResult)
 	if err != nil {
