@@ -3,7 +3,6 @@ package main
 // This is a scratch pad for testing new operations. Please DO NOT review!
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -624,30 +623,27 @@ func PrintHorizonError(hError *horizonclient.Error) error {
 	log.Println("Error detail:", problem.Detail)
 	log.Println("Error instance:", problem.Instance)
 
-	// var decodedResultCodes map[string]interface{}
-	var decodedResult, decodedEnvelope string
-	var err error
-
 	resultCodes, err := hError.ResultCodes()
 	if err != nil {
 		return errors.Wrap(err, "Couldn't read ResultCodes")
 	}
-	log.Println("Error extras result codes:", resultCodes)
+	log.Println("TransactionCode:", resultCodes.TransactionCode)
+	log.Println("OperationCodes:")
 	for _, code := range resultCodes.OperationCodes {
-		log.Println(code)
+		log.Println("    ", code)
 	}
 
-	err = json.Unmarshal(problem.Extras["result_xdr"].([]byte), &decodedResult)
+	resultString, err := hError.ResultString()
 	if err != nil {
-		return errors.Wrap(err, "Couldn't unmarshal result_xdr")
+		return errors.Wrap(err, "Couldn't read ResultString")
 	}
-	log.Println("Error extras result (TransactionResult) XDR:", decodedResult)
+	log.Println("TransactionResult XDR (base 64):", resultString)
 
-	err = json.Unmarshal(problem.Extras["envelope_xdr"].([]byte), &decodedEnvelope)
+	envelope, err := hError.Envelope()
 	if err != nil {
-		return errors.Wrap(err, "Couldn't unmarshal envelope_xdr")
+		return errors.Wrap(err, "Couldn't read Envelope")
 	}
-	log.Println("Error extras envelope (TransactionEnvelope) XDR:", decodedEnvelope)
+	log.Println("TransactionEnvelope XDR:", envelope)
 
 	return nil
 }
