@@ -2,6 +2,7 @@ package horizonclient
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -63,7 +64,27 @@ func TestEffectRequestBuildUrl(t *testing.T) {
 
 }
 
-func TestEffectStream(t *testing.T) {
+func ExampleClient_StreamEffects() {
+	client := DefaultTestNetClient
+	// all effects
+	effectRequest := EffectRequest{Cursor: "760209215489"}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		// Stop streaming after 60 seconds.
+		time.Sleep(60 * time.Second)
+		cancel()
+	}()
+
+	printHandler := func(e effects.Base) {
+		fmt.Println(e)
+	}
+	err := client.StreamEffects(ctx, effectRequest, printHandler)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+func TestEffectRequestStreamEffects(t *testing.T) {
 	hmock := httptest.NewClient()
 	client := &Client{
 		HorizonURL: "https://localhost/",
@@ -85,12 +106,9 @@ func TestEffectStream(t *testing.T) {
 		cancel()
 	}()
 
-	var effectStream []effects.Base
-	err := client.Stream(ctx, effectRequest, func(effect interface{}) {
-		resp, ok := effect.(effects.Base)
-		if ok {
-			effectStream = append(effectStream, resp)
-		}
+	effectStream := make([]effects.Base, 1)
+	err := client.StreamEffects(ctx, effectRequest, func(effect effects.Base) {
+		effectStream[0] = effect
 	})
 
 	if assert.NoError(t, err) {
@@ -112,11 +130,8 @@ func TestEffectStream(t *testing.T) {
 		cancel()
 	}()
 
-	err = client.Stream(ctx, effectRequest, func(effect interface{}) {
-		resp, ok := effect.(effects.Base)
-		if ok {
-			effectStream = append(effectStream, resp)
-		}
+	err = client.StreamEffects(ctx, effectRequest, func(effect effects.Base) {
+		effectStream[0] = effect
 	})
 
 	if assert.NoError(t, err) {
@@ -132,17 +147,13 @@ func TestEffectStream(t *testing.T) {
 		"https://localhost/effects?cursor=now",
 	).ReturnString(500, effectStreamResponse)
 
-	err = client.Stream(ctx, effectRequest, func(effect interface{}) {
-		resp, ok := effect.(effects.Base)
-		if ok {
-			effectStream = append(effectStream, resp)
-		}
+	err = client.StreamEffects(ctx, effectRequest, func(effect effects.Base) {
+		effectStream[0] = effect
 		cancel()
 	})
 
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "Got bad HTTP status code 500")
-
 	}
 }
 

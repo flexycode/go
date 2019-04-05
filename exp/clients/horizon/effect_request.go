@@ -74,12 +74,13 @@ func (er EffectRequest) BuildUrl() (endpoint string, err error) {
 	return endpoint, err
 }
 
-// Stream streams horizon effects. It can be used to stream all effects or account specific effects.
+// StreamEffects streams horizon effects. It can be used to stream all effects or account specific effects.
 // Use context.WithCancel to stop streaming or context.Background() if you want to stream indefinitely.
-func (er EffectRequest) Stream(
+// EffectHandler is a user-supplied function that is executed for each streamed effect received.
+func (er EffectRequest) StreamEffects(
 	ctx context.Context,
 	client *Client,
-	handler func(interface{}),
+	handler EffectHandler,
 ) (err error) {
 	endpoint, err := er.BuildUrl()
 	if err != nil {
