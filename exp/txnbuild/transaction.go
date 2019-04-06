@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/stellar/go/clients/horizon"
 	"github.com/stellar/go/keypair"
 	"github.com/stellar/go/network"
 	"github.com/stellar/go/support/errors"
@@ -19,6 +20,19 @@ import (
 type Account struct {
 	ID             string
 	SequenceNumber xdr.SequenceNumber
+}
+
+// FromHorizonAccount is a convenience method that maps an account returned by
+// horizonclient to a txnbuild.Account.
+func (a *Account) FromHorizonAccount(horizonAccount horizon.Account) error {
+	seqnum, err := horizonAccount.GetSequenceNumber()
+	if err != nil {
+		return errors.Wrap(err, "Failed to get sequence number")
+	}
+	a.ID = horizonAccount.ID
+	a.SequenceNumber = seqnum
+
+	return nil
 }
 
 // Transaction represents a Stellar Transaction.
@@ -123,4 +137,25 @@ func (tx *Transaction) Sign(kp *keypair.Full) error {
 	tx.xdrEnvelope.Signatures = append(tx.xdrEnvelope.Signatures, sig)
 
 	return nil
+}
+
+// BuildSignEncode performs all the steps to produce a final transaction suitable
+// for submitting to the network.
+func (tx *Transaction) BuildSignEncode(keypair *keypair.Full) (string, error) {
+	err := tx.Build()
+	if err != nil {
+		return "", errors.Wrap(err, "Couldn't build transaction")
+	}
+
+	err = tx.Sign(keypair)
+	if err != nil {
+		return "", errors.Wrap(err, "Couldn't sign transaction")
+	}
+
+	txeBase64, err := tx.Base64()
+	if err != nil {
+		return "", errors.Wrap(err, "Couldn't encode transaction")
+	}
+
+	return txeBase64, err
 }

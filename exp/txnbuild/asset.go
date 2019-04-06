@@ -1,6 +1,7 @@
 package txnbuild
 
 import (
+	"github.com/stellar/go/clients/horizon"
 	"github.com/stellar/go/support/errors"
 	"github.com/stellar/go/xdr"
 )
@@ -24,6 +25,13 @@ func NewAsset(code, issuer string) *Asset {
 		Issuer: issuer,
 	}
 	return &a
+}
+
+// FromHorizonAsset is a convenience method that maps an asset returned by
+// horizonclient to a txnbuild.Asset.
+func (a *Asset) FromHorizonAsset(horizonAsset horizon.Asset) {
+	a.Code = horizonAsset.Code
+	a.Issuer = horizonAsset.Issuer
 }
 
 // IsNative for Asset returns true if this is an XLM asset.
